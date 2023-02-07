@@ -58,6 +58,8 @@ namespace Kopilka
         {
             Savings_History savings_History = new Savings_History();
             savings_History.Show();
+            this.Hide();
+
         }
 
         private void calculation_Click(object sender, EventArgs e)
@@ -69,33 +71,40 @@ namespace Kopilka
             taxes_values = int.Parse(taxes.Text);
             deferred_part_default_values = total_income_values / 10;
             deferred_part_values = total_income_values - (payment_for_housing_values + communal_payments_values + other_expenses_values + taxes_values);
-            if (deferred_part_default_values <= deferred_part_values)
-            {
-                Date = DateTime.Now;
-                try
+            if (total_income_values > 0) {
+                if (deferred_part_default_values <= deferred_part_values)
                 {
-                    connection.Open();
-                    sql = "insert into accumulation (set_aside_money, deposit_date) values (@_deferred_part_values, @_date)";
-                    command = new NpgsqlCommand(sql, connection);
-                    command.Parameters.AddWithValue("@_deferred_part_values", deferred_part_values);
-                    command.Parameters.AddWithValue("@_date", Date);
-                    command.ExecuteNonQuery();
+                    Date = DateTime.Now;
+                    try
+                    {
+                        connection.Open();
+                        sql = "insert into accumulation (set_aside_money, deposit_date) values (@_deferred_part_values, @_date)";
+                        command = new NpgsqlCommand(sql, connection);
+                        command.Parameters.AddWithValue("@_deferred_part_values", deferred_part_values);
+                        command.Parameters.AddWithValue("@_date", Date);
+                        command.ExecuteNonQuery();
 
-                    MessageBox.Show("Внесён депозит равный " + deferred_part_values + "");
+                        MessageBox.Show("Внесён депозит равный " + deferred_part_values + "");
+                    }
+                    catch (Exception ex)
+                    {
+                        connection.Close();
+                        MessageBox.Show("Error: " + ex.Message);
+
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    connection.Close();
-                    MessageBox.Show("Error: " + ex.Message);
+                    deferred_part_values = deferred_part_default_values - deferred_part_values;
 
+                    MessageBox.Show("Сумма которая вы хотите отложить меньше 10-ой части поэтому рекомендую уменьшить прочие расходы на :" + deferred_part_values);
                 }
             }
             else
             {
-                deferred_part_values = deferred_part_default_values - deferred_part_values;
-
-                MessageBox.Show("Сумма которая вы хотите отложить меньше 10-ой части поэтому рекомендую уменьшить прочие расходы на :" + deferred_part_values);
+                MessageBox.Show("Введите общую сумму расчётов, без неё невозможно произвести вычисления");
             }
+
         }
 
         private void get_file_Click(object sender, EventArgs e)

@@ -152,7 +152,7 @@
             this.calculation.Name = "calculation";
             this.calculation.Size = new System.Drawing.Size(140, 55);
             this.calculation.TabIndex = 12;
-            this.calculation.Text = "Расчитать";
+            this.calculation.Text = "Рассчитать";
             this.calculation.UseVisualStyleBackColor = false;
             this.calculation.Click += new System.EventHandler(this.calculation_Click);
             // 

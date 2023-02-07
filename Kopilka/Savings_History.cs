@@ -42,6 +42,7 @@ namespace Kopilka
             command = new NpgsqlCommand(sql, connection);
             total_sav = (int)command.ExecuteScalar();
             total_savings.Text = total_sav.ToString();
+            total_savings.ReadOnly = true;
 
         }
 
@@ -67,6 +68,13 @@ namespace Kopilka
             {
                 connection.Close();
             }
+        }
+
+        private void backButton_Click(object sender, EventArgs e)
+        {
+           Main_Window main_Window  = new Main_Window();
+           main_Window.Show();
+           this.Close();
         }
     }
 }
